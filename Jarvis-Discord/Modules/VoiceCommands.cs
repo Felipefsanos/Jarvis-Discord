@@ -21,7 +21,7 @@ namespace Jarvis_Discord.Modules
         //}
 
         [Command("join", true)]
-        public async Task JoinCommand(string link)
+        public async Task JoinCommand(string link = null)
         {
             if (string.IsNullOrWhiteSpace(link))
             {
@@ -34,9 +34,19 @@ namespace Jarvis_Discord.Modules
 
             if(voiceState.VoiceChannel is null)
             {
-                await ReplyAsync($"{user.Mention} Você precisa estar em um canal de voz para tocar músicas!");
+                await ReplyAsync($"{user.Mention}. Você precisa estar em um canal de voz para tocar músicas!");
                 return;
             }
+
+            var voiceChannel = Context.Guild.VoiceChannels.Where(x => x.Id == voiceState.VoiceChannel.Id).FirstOrDefault();
+
+            if(voiceChannel is null) 
+            {
+                await ReplyAsync($"{user.Mention}. Não encontrei o canal de voz em que você está! Tente novamente.");
+                return;
+            }
+
+            await voiceChannel.ConnectAsync();
             //if(channelUsers.Any(x => !x.Any(x => x.Id == user.Id))) 
             //{
             //    await ReplyAsync("Bolo de fubá");
